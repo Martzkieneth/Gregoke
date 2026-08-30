@@ -3,20 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GregOke Your Mini Karaoke System</title>
+  <title>Greg'Oke • Mini Karaoke System</title>
+  <!-- Google Fonts para sa modern aesthetic typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
-    /* SPLASH SCREEN STYLES */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f0c1b 0%, #1a102f 50%, #080612 100%);
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --accent-pink: #ff2a85;
+      --accent-cyan: #00f2fe;
+      --accent-purple: #9d4edd;
+      --text-main: #f8f9fa;
+      --text-muted: #a0a5b5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Lighting Effect sa background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -10%; left: 20%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255, 42, 133, 0.15) 0%, rgba(0,0,0,0) 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -10%; right: 20%;
+      width: 450px; height: 450px;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0,0,0,0) 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* BURGER MENU BUTTON & NAV */
+    .burger-btn {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .burger-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+    }
+
+    .burger-line {
+      width: 20px;
+      height: 2px;
+      background-color: var(--text-main);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    /* Slide-out Menu overlay */
+    .nav-menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 260px;
+      height: 100vh;
+      background: rgba(15, 12, 27, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-left: 1px solid var(--glass-border);
+      z-index: 9999;
+      padding: 80px 25px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-menu.active {
+      right: 0;
+    }
+
+    .menu-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(-5px);
+    }
+
+    .social-link.fb:hover {
+      border-color: #1877f2;
+      color: #1877f2;
+      box-shadow: 0 0 15px rgba(24, 119, 242, 0.2);
+    }
+
+    .social-link.tg:hover {
+      border-color: #24a1de;
+      color: #24a1de;
+      box-shadow: 0 0 15px rgba(36, 161, 222, 0.2);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 9998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* SPLASH SCREEN */
     #splashScreen {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: radial-gradient(circle at 50% 50%, #152338 0%, #050a12 100%);
+      background: #080612;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 9999999;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
       cursor: pointer;
     }
 
@@ -26,132 +199,84 @@
     }
 
     .splash-icon {
-      font-size: 5rem;
-      filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.6));
-      animation: pulse 1.5s infinite alternate;
+      font-size: 4rem;
+      background: linear-gradient(45deg, var(--accent-pink), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
     }
 
     .splash-title {
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: #ffd700;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      margin: 0;
-      text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-      text-align: center;
-      animation: fadeInUp 1s ease forwards;
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(180deg, #ffffff 0%, #a0a5b5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .splash-subtitle {
-      font-size: 1.1rem;
-      color: #00ffcc;
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
       letter-spacing: 4px;
       text-transform: uppercase;
       font-weight: 600;
-      margin-top: 8px;
-      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-      animation: fadeInUp 1.2s ease forwards;
+      margin-top: 5px;
+      opacity: 0.9;
     }
 
-    .splash-loader {
-      margin-top: 30px;
-      width: 150px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
+    /* MAIN CONTAINER */
+    .app-container {
+      width: 100%;
+      max-width: 950px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
       position: relative;
     }
 
-    .splash-loader-bar {
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, #00ffcc, #ffd700);
-      position: absolute; left: -100%;
-      animation: loadingBar 2.2s ease-in-out forwards;
-    }
-
-    .splash-skip-text {
-      font-size: 0.75rem;
-      color: #778899;
-      margin-top: 15px;
-      letter-spacing: 1px;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.1); }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes loadingBar {
-      0% { left: -100%; }
-      100% { left: 0%; }
-    }
-
-    /* GENERAL STYLES */
-    body {
-      background-color: #0b1320;
-      background-image: 
-        radial-gradient(circle at 50% 50%, rgba(15, 27, 41, 0.7) 0%, rgba(7, 12, 20, 0.95) 100%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' opacity='0.12'%3E%3Cpath fill='%2000ffcc' d='M30 15v25.5a7.5 7.5 0 1 1-3-6V21l18-5v18.5a7.5 7.5 0 1 1-3-6V15L30 15zm0 60a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm-3 15v10h6V90h-6zm1.5-33a4.5 4.5 0 0 0 4.5-4.5V60a4.5 4.5 0 0 0-9 0v12.5a4.5 4.5 0 0 0 4.5 4.5zM90 20v20a5 5 0 1 1-2-4.1V23l12-3.5v15.6a5 5 0 1 1-2-4.1V20L90 20zm0 65a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm-3 15v10h6v-10h-6zm1.5-33a4.5 4.5 0 0 0 4.5-4.5V65a4.5 4.5 0 0 0-9 0v12.5a4.5 4.5 0 0 0 4.5 4.5z'/%3E%3C/svg%3E");
-      background-attachment: fixed;
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      padding: 20px 15px;
-      margin: 0;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
-
-    .platinum-system {
-      width: 100%;
-      max-width: 1200px;
-      background: rgba(26, 38, 54, 0.92);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.8), 0 0 15px rgba(0, 255, 204, 0.15);
-      border: 1px solid rgba(0, 255, 204, 0.2);
-      box-sizing: border-box;
+    /* HEADER */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 25px;
     }
 
     .brand-title {
-      font-size: 1.6rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      color: #ffd700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: 0;
-      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-      text-align: center;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
+
     .brand-subtitle {
-      font-size: 0.8rem;
-      color: #00ffcc;
-      letter-spacing: 3px;
-      margin-bottom: 15px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
       text-transform: uppercase;
-      text-align: center;
+      margin-top: 4px;
       font-weight: 600;
     }
 
+    /* VIDEO PLAYER */
     .player-container {
       position: relative;
       width: 100%;
       padding-bottom: 56.25%;
       background: #000;
-      border-radius: 10px;
-      margin-bottom: 12px;
+      border-radius: 16px;
       overflow: hidden;
-      border: 2px solid #334455;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      margin-bottom: 15px;
     }
+
     .player-container iframe {
       position: absolute;
       top: 0; left: 0;
@@ -168,106 +293,177 @@
       border-radius: 0 !important;
     }
 
+    /* CONTROLS */
     .controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
+
+    .tip-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
     .fullscreen-btn {
-      background: linear-gradient(135deg, #0088cc, #005588);
+      background: linear-gradient(135deg, rgba(255, 42, 133, 0.2), rgba(0, 242, 254, 0.2));
+      border: 1px solid var(--glass-border);
       color: #fff;
-      border: 1px solid #00aaff;
       padding: 10px 20px;
-      font-size: 0.95rem;
-      font-weight: bold;
-      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 12px;
       cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .fullscreen-btn:hover {
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-cyan));
+      box-shadow: 0 5px 20px rgba(0, 242, 254, 0.3);
+      transform: translateY(-2px);
     }
 
     .in-player-exit-btn {
       display: none;
       position: absolute;
-      top: 15px; right: 15px;
+      top: 20px; right: 20px;
       z-index: 2147483647;
-      background: #ff3366;
+      background: rgba(255, 42, 133, 0.8);
       color: #fff;
-      border: 2px solid #fff;
-      padding: 10px 18px;
-      font-weight: bold;
-      border-radius: 8px;
+      border: none;
+      padding: 10px 20px;
+      font-weight: 700;
+      border-radius: 10px;
       cursor: pointer;
+      backdrop-filter: blur(5px);
     }
 
     /* SONGBOOK */
     .songbook {
-      background: rgba(17, 26, 36, 0.9);
-      padding: 18px;
-      border-radius: 10px;
-      border: 1px solid #223344;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 20px;
     }
+
     .songbook-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      gap: 15px;
       flex-wrap: wrap;
-      gap: 12px;
     }
+
     .songbook-title {
-      color: #ffd700;
-      font-weight: bold;
-      font-size: 1.15rem;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
     .search-input {
-      background: #080d14;
-      border: 1px solid #00ffcc;
-      color: #00ffcc;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.9rem;
       outline: none;
       width: 100%;
-      max-width: 340px;
+      max-width: 320px;
+      transition: all 0.3s ease;
     }
+
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* TABLE */
     .song-table-wrapper {
       max-height: 380px;
       overflow-y: auto;
-      border-radius: 6px;
-      border: 1px solid #223344;
+      border-radius: 12px;
     }
+
+    .song-table-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
+    .song-table-wrapper::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
     .song-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.95rem;
-    }
-    .song-table th, .song-table td {
-      padding: 12px 14px;
-      border-bottom: 1px solid #1f2d3d;
       text-align: left;
     }
+
     .song-table th {
-      color: #00ffcc;
-      font-size: 0.85rem;
+      padding: 14px 18px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
       text-transform: uppercase;
+      letter-spacing: 1.5px;
       position: sticky;
       top: 0;
-      background: #0f1822;
+      background: #110e20;
+      z-index: 2;
     }
+
+    .song-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 0.95rem;
+    }
+
     .song-row {
+      transition: background 0.2s ease;
       cursor: pointer;
     }
+
     .song-row:hover {
-      background: rgba(0, 255, 204, 0.08);
+      background: rgba(255, 255, 255, 0.04);
     }
+
+    .song-title-text {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .song-artist-text {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
     .play-action-btn {
-      background: #00ffcc;
-      color: #000;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      color: #fff;
       border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .song-row:hover .play-action-btn {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 42, 133, 0.4);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
   </style>
 </head>
@@ -276,40 +472,59 @@
   <!-- SPLASH SCREEN -->
   <div id="splashScreen" onclick="hideSplash()">
     <div class="splash-icon">🎤</div>
-    <div class="splash-title">GregOke</div>
-    <div class="splash-subtitle">Your Mini Karaoke System</div>
-    <div class="splash-loader">
-      <div class="splash-loader-bar"></div>
-    </div>
-    <div class="splash-skip-text">(Click anywhere to skip)</div>
+    <div class="splash-title">Greg'Oke</div>
+    <div class="splash-subtitle">Aesthetic Karaoke Experience</div>
   </div>
 
-  <div class="platinum-system">
-    <div class="brand-title">🎤 GregOke 🎵</div>
-    <div class="brand-subtitle">Your Mini Karaoke System</div>
+  <!-- SLIDE-OUT MENU & OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+  <nav class="nav-menu" id="navMenu">
+    <div class="menu-title">Connect With Us</div>
+    <!-- PALITAN ANG LINKS SA IBABA NG IYONG ACCURATE USERNAMES/URLS -->
+    <a href="https://facebook.com/YOUR_FACEBOOK_USERNAME" target="_blank" class="social-link fb">
+      <span>📘</span> Facebook
+    </a>
+    <a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" class="social-link tg">
+      <span>✈️</span> Telegram
+    </a>
+  </nav>
+
+  <div class="app-container">
+    <!-- BURGER BUTTON -->
+    <div class="burger-btn" onclick="toggleMenu()">
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+    </div>
+
+    <div class="brand-header">
+      <div class="brand-title">GREG'OKE</div>
+      <div class="brand-subtitle">Mini Karaoke System</div>
+    </div>
 
     <div class="player-container" id="playerWrapper">
-      <button id="innerExitBtn" class="in-player-exit-btn" onclick="exitFs()">✖ Exit Fullscreen</button>
+      <button id="innerExitBtn" class="in-player-exit-btn" onclick="exitFs()">✕ Exit Fullscreen</button>
       <iframe id="youtubePlayer" src="about:blank" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
     </div>
 
     <div class="controls">
-      <span style="font-size: 0.85rem; color: #8899a0;">💡 Tip: Press <b>ESC</b> on keyboard to exit fullscreen</span>
-      <button class="fullscreen-btn" onclick="openFs()">⛶ Fullscreen Player</button>
+      <span class="tip-text">✨ Select any track below to start singing</span>
+      <button class="fullscreen-btn" onclick="openFs()">⛶ Fullscreen</button>
     </div>
 
     <div class="songbook">
       <div class="songbook-header">
-        <span class="songbook-title">🎶 SELECT A SONG TO SING</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search Title or Artist..." onkeyup="filterSongs()">
+        <div class="songbook-title">🎵 TRACKLIST</div>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search title or artist..." onkeyup="filterSongs()">
       </div>
+      
       <div class="song-table-wrapper">
         <table class="song-table">
           <thead>
             <tr>
-              <th>Song Title</th>
+              <th>Title</th>
               <th>Artist</th>
-              <th style="width: 90px; text-align: center;">Action</th>
+              <th style="width: 80px; text-align: center;">Play</th>
             </tr>
           </thead>
           <tbody id="songTableBody"></tbody>
@@ -326,19 +541,32 @@
         setTimeout(() => splash.remove(), 800);
       }
     }
-    setTimeout(hideSplash, 2500);
+    setTimeout(hideSplash, 2000);
+
+    /* BURGER MENU LOGIC */
+    function toggleMenu() {
+      document.getElementById('navMenu').classList.toggle('active');
+      document.getElementById('menuOverlay').classList.toggle('active');
+    }
 
     let songBook = [];
 
-    // AUTOMATIC FETCHING NG SONGS MULA SA songs.json
     async function fetchSongs() {
       try {
-        const response = await fetch('songs.json');
-        if (!response.ok) throw new Error('Hindi ma-load ang songs.json');
+        const response = await fetch('./songs.json?v=' + new Date().getTime());
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
         songBook = await response.json();
         loadSongbook();
       } catch (error) {
         console.error("Error loading song list:", error);
+        document.getElementById('songTableBody').innerHTML = `
+          <tr>
+            <td colspan="3" style="color: var(--accent-pink); text-align:center; padding: 25px;">
+              ❌ Unable to load songs.json. Check your GitHub repository.
+            </td>
+          </tr>
+        `;
       }
     }
 
@@ -353,10 +581,10 @@
 
       tbody.innerHTML = filteredSongs.map((song) => `
         <tr class="song-row" onclick="playSong('${song.url}')">
-          <td style="color:#00ffcc; font-weight:bold;">${song.title}</td>
-          <td style="color:#ddd;">${song.artist}</td>
+          <td><span class="song-title-text">${song.title}</span></td>
+          <td><span class="song-artist-text">${song.artist}</span></td>
           <td style="text-align:center;">
-            <button class="play-action-btn">🎤 Play</button>
+            <button class="play-action-btn">▶ Play</button>
           </td>
         </tr>
       `).join('');
@@ -425,7 +653,6 @@
       }
     }
 
-    // Kusa nitong kukuhanin ang kanta sa load ng page
     fetchSongs();
   </script>
 </body>
